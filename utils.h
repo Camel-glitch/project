@@ -18,8 +18,8 @@ float rand_float(float min, float max);
 
 HestonParams generate_valid_params();
 
-void init_curand_state_k(curandState *state, unsigned long seed);   
+__global__ void init_curand_state_k(curandState *state, unsigned long seed);   
 
-double step_variance(double v_prev, float kappa, float theta, float sigma, float dt, curandState *state);
+__device__ double step_variance(double v_prev, float kappa, float theta, float sigma, float dt, curandState *state);
 
 #endif // UTILS_H
