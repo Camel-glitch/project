@@ -1,3 +1,10 @@
+#include <stdio.h>
+#include <curand_kernel.h>
+#include <math.h>
+#include <curand_kernel.h>
+#include "gamma.h"
+
+
 __device__ double generate_gamma(double a, curandState *state) {
     if (a < 1.0) {
         double u = curand_uniform_double(state);
