@@ -1,20 +1,31 @@
-# Variables pour faciliter les modifications futures
-CC = nvcc
-CFLAGS = -arch=sm_60 -O2	
-# CFLAGS = -Wall -Wextra -g
+# 1. Configuration des outils
+NVCC = nvcc
+CFLAGS = -O3 -Wall -Wno-deprecated-gpu-targets # Flags d'optimisation
+TARGET = main
 
-# La première règle est celle exécutée par défaut quand on tape 'make'
-mon_programme: main.o calculs.o
-	$(CC) $(CFLAGS) main.o calculs.o -o mon_programme
+# 2. La "Magie" : Trouver tous les fichiers sources automatiquement
+# On cherche tous les .c et tous les .cu
+SRCS = $(wildcard *.c) $(wildcard *.cu)
 
-# Comment créer main.o
-main.o: main.c calculs.h
-	$(CC) $(CFLAGS) -c main.c
+# On transforme la liste des sources en liste d'objets (.o)
+# Exemple : main.cu devient main.o, calculs.c devient calculs.o
+OBJS = $(SRCS:.c=.o)
+OBJS := $(OBJS:.cu=.o)
 
-# Comment créer calculs.o
-calculs.o: calculs.c calculs.h
-	$(CC) $(CFLAGS) -c calculs.c
+# 3. Règle principale (Linker)
+$(TARGET): $(OBJS)
+	$(NVCC) $(OBJS) -o $(TARGET)
+	@echo "--- Compilation terminée avec succès ! ---"
 
-# Règle de nettoyage pour supprimer les fichiers temporaires
+# 4. Règle générique pour les fichiers .c -> .o
+%.o: %.c
+	$(NVCC) -c $< -o $@
+
+# 5. Règle générique pour les fichiers .cu -> .o
+%.o: %.cu
+	$(NVCC) -c $< -o $@
+
+# 6. Nettoyage
 clean:
-	rm -f *.o mon_programme
+	rm -f *.o $(TARGET)
+	@echo "--- Dossier nettoyé ---"
