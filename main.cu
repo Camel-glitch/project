@@ -53,9 +53,10 @@ int main(void) {
 
     // 2. Launch Monte Carlo Kernel
     // Arguments: state, output array, and model parameters
+    
     size_t shared_mem_size = 2 * NTPB * sizeof(float); // Shared memory for both sums
     MC_euler<<<NB, NTPB, shared_mem_size>>>(rho,v_0,S_0, r, sigma, k, theta, dt, K, N,
-            state, PayGPU, n);
+            state, &PayGPU[0], &PayGPU[1], n);
 
     cudaEventRecord(stop, 0);
     cudaEventSynchronize(stop);
