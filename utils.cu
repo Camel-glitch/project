@@ -39,7 +39,7 @@ HestonParams generate_valid_params() {
 */ 
 
 // Set the state for each thread
-__global__ void init_curand_state_k(curandStateXORWOW *state, unsigned long seed) {
+__global__ void init_curand_state_k(curandState *state, unsigned long seed) {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
 
     /* curand_init parameters:

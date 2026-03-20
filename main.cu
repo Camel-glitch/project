@@ -27,17 +27,16 @@ int main(void) {
 
     // CPU Memory Allocation
     //float *PayCPU = (float*)malloc(n * sizeof(float));
-    float *PayCPU = (float*)malloc(1 * sizeof(float)); // Only one float for the sum
+    float *PayCPU = (float*)malloc(2 * sizeof(float)); // Only one float for the sum
 
     // GPU Memory Allocation
     float *PayGPU;
     //cudaMalloc((void**)&PayGPU, n * sizeof(float));
-    cudaMalloc((void**)&PayGPU, 1 * sizeof(float));
+    cudaMalloc((void**)&PayGPU, 2 * sizeof(float));
 
     // RNG State Allocation
-    curandStateXORWOW *state; 
-    cudaMalloc((void**)&state, n * sizeof(curandStatePhilox4_32_10_t));
-
+    curandState *state; 
+    cudaMalloc((void**)&state, n * sizeof(*state));
     // Random Seed (using system time or fixed value)
     unsigned long seed = 1234ULL; 
 
@@ -54,7 +53,7 @@ int main(void) {
 
     // 2. Launch Monte Carlo Kernel
     // Arguments: state, output array, and model parameters
-    MC_euler<<<NB, NTPB, sizeof(float)*NTPB>>>(rho,v_0,S_0, r, sigma, k, theta, dt, K, N,
+    MC_euler<<<NB, NTPB, sizeof(float)*NTPB,sizeof(float)*NTPB>>>(rho,v_0,S_0, r, sigma, k, theta, dt, K, N,
             state, PayGPU, n);
 
     cudaEventRecord(stop, 0);
@@ -63,7 +62,7 @@ int main(void) {
     
     // 3. Copy Results back to Host
     //cudaMemcpy(PayCPU, PayGPU, n* sizeof(float), cudaMemcpyDeviceToHost);
-    cudaMemcpy(PayCPU, PayGPU, 1* sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(PayCPU, PayGPU, 2* sizeof(float), cudaMemcpyDeviceToHost);
     
     float price = PayCPU[0]/(float)n; // pricing estimation
     float second_moment = PayCPU[1]/(float)n; // We would need to compute this separately if we want the confidence interval
