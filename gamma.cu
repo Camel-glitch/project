@@ -2,7 +2,6 @@
 #include <curand_kernel.h>
 #include <math.h>
 #include <curand_kernel.h>
-#include "gamma.h"
 
 
 __device__ double generate_gamma(double a, curandState *state) {
