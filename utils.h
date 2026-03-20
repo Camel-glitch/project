@@ -1,10 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <stdbool.h>
+#include <curand_kernel.h>
 
 // Structure pour stocker les paramètres
 typedef struct {

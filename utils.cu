@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdbool.h>
+#include <curand_kernel.h>
 #include "utils.h"
 
 
