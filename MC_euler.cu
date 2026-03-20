@@ -11,10 +11,11 @@ __global__ void MC_euler(float rho, float v_0, float S_0, float r, float sigma, 
     
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     
-    // Dynamic shared memory for reduction
-    extern __shared__ float R1s[]; 
-    // Add variance computation for confidence interval if needed (not implemented here)
-    extern __shared__ float R2s[]; 
+    extern __shared__ float A[]; 
+    
+    float* R1s = A;             
+    float* R2s = &A[blockDim.x]; 
+    
 
 
     float payoff = 0.0f;
