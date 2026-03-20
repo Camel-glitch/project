@@ -2,7 +2,15 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdbool.h>
+#include "utils.h"
 
+
+// Structure pour stocker les paramètres
+typedef struct {
+    float kappa;
+    float theta;
+    float sigma;
+} HestonParams;
 
 
 // Fonction utilitaire pour générer un float entre min et max
