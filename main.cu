@@ -65,8 +65,8 @@ int main(void) {
     //cudaMemcpy(PayCPU, PayGPU, n* sizeof(float), cudaMemcpyDeviceToHost);
     cudaMemcpy(PayCPU, PayGPU, 1* sizeof(float), cudaMemcpyDeviceToHost);
     
-    float sum = PayCPU[0]/(float)n; // pricing estimation
-    //float sum2 = 0.0f; // We would need to compute this separately if we want the confidence interval
+    float price = PayCPU[0]/(float)n; // pricing estimation
+    float second_moment = PayCPU[1]/(float)n; // We would need to compute this separately if we want the confidence interval
 
     /* Reduction performed on the host
     float sum = 0.0f;
@@ -80,8 +80,9 @@ int main(void) {
     sum2 = sum2 / n; 
     */
 
-    printf("The estimated price is equal to %f\n", sum);
-    //printf("error (95%% CI) = %f\n", 1.96 * sqrt((double)(1.0f / (n - 1)) * (n * sum2 - (n * sum * sum))) / sqrt((double)n));
+    printf("The estimated price is equal to %f\n", price);
+    printf("error (95%% CI) = %f\n", 1.96 * sqrt((double)(1.0f / (n - 1)) * (n * second_moment - (n * price * price))) / sqrt((double)n));
+    
     
     // Note: The Black-Scholes formula in your print statement is a simplified version for comparison
     printf("Execution time %f ms\n", Tim);

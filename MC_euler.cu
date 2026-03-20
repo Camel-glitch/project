@@ -7,13 +7,15 @@
 
 // Monte Carlo simulation kernel
 __global__ void MC_euler(float rho, float v_0, float S_0, float r, float sigma, float k, float theta, float dt, float K, int N,
-            curandState* state, float* sum, int n) {
+            curandState* state, float* sum, float* sum2, int n) {
     
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     
     // Dynamic shared memory for reduction
     extern __shared__ float R1s[]; 
     // Add variance computation for confidence interval if needed (not implemented here)
+    extern __shared__ float R2s[]; 
+
 
     float payoff = 0.0f;
 
@@ -36,11 +38,12 @@ __global__ void MC_euler(float rho, float v_0, float S_0, float r, float sigma, 
         payoff = fmaxf(0.0f, S - K);
         
         // Save state back to global memory for future kernel calls
-        state[idx] = localState;
+        //state[idx] = localState;
     }
 
     // All threads write to shared memory (inactive threads write 0.0f)
     R1s[threadIdx.x] = payoff;
+    R2s[threadIdx.x] = payoff * payoff;
     __syncthreads();
 
     // Parallel reduction in shared memory (Requires blockDim.x to be a power of 2)
@@ -48,6 +51,7 @@ __global__ void MC_euler(float rho, float v_0, float S_0, float r, float sigma, 
     while (i != 0) {
         if (threadIdx.x < i) {
             R1s[threadIdx.x] += R1s[threadIdx.x + i];
+            R2s[threadIdx.x] += R2s[threadIdx.x + i];
         }
         __syncthreads();
         i /= 2;
@@ -56,5 +60,7 @@ __global__ void MC_euler(float rho, float v_0, float S_0, float r, float sigma, 
     // Thread 0 of each block adds its block's total to the global sum safely
     if (threadIdx.x == 0) {
         atomicAdd(sum, R1s[0]);
+        atomicAdd(sum2, R2s[0]);
+        
     }
 }
