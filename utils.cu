@@ -3,22 +3,22 @@
 #include <time.h>
 #include <stdbool.h>
 #include <curand_kernel.h>
-#include "utils.h"
 
 
-// Structure pour stocker les paramètres
+/*// Structure pour stocker les paramètres
 typedef struct {
     float kappa;
     float theta;
     float sigma;
 } HestonParams;
-
+*/
 
 // Fonction utilitaire pour générer un float entre min et max
 float rand_float(float min, float max) {
     return min + ((float)rand() / (float)RAND_MAX) * (max - min);
 }
 
+/*
 HestonParams generate_valid_params() {
     HestonParams p;
     bool is_valid = false;
@@ -36,6 +36,7 @@ HestonParams generate_valid_params() {
     }
     return p;
 }
+*/ 
 
 // Set the state for each thread
 __global__ void init_curand_state_k(curandStateXORWOW *state, unsigned long seed) {
@@ -51,7 +52,7 @@ __global__ void init_curand_state_k(curandStateXORWOW *state, unsigned long seed
     curand_init(seed, idx, 0, &state[idx]);
 }
 
-
+/*
 __device__ double step_variance(double vt, double kappa, double theta, double sigma, double dt, curandState *state) {
     // 1. Précalcul des constantes pour ce pas de temps
     double exp_kdt = exp(-kappa * dt);
@@ -76,3 +77,4 @@ __device__ double step_variance(double vt, double kappa, double theta, double si
     // La formule vt+dt = scale * 2 * G(d + N) correspond à la loi du Khi-deux non-centrale
     return scale * 2.0 * G;
 }
+*/  
