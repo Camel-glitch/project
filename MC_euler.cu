@@ -33,7 +33,7 @@ __global__ void MC_euler(float rho, float v_0, float S_0, float r, float sigma, 
             v = fabsf(v + k * (theta - v) * dt + sigma * sqrtf(v * dt) * G.x);
         }
 
-        payoff = fmaxf(0.0f, S - K) / (float)n;
+        payoff = fmaxf(0.0f, S - K);
         
         // Save state back to global memory for future kernel calls
         state[idx] = localState;

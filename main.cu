@@ -10,7 +10,7 @@
 int main(void) {
     int NTPB = 512;
     int NB = 512;
-    long long n =  NB * NTPB; // Number of trajectories
+    int n =  NB * NTPB; // Number of trajectories
     
     // Model Parameters
     float T = 1.0f;
@@ -54,7 +54,7 @@ int main(void) {
 
     // 2. Launch Monte Carlo Kernel
     // Arguments: state, output array, and model parameters
-    MC_euler<<<NB, NTPB>>>(rho,v_0,S_0, r, sigma, k, theta, dt, K, N,
+    MC_euler<<<NB, NTPB, sizeof(float)*NTPB>>>(rho,v_0,S_0, r, sigma, k, theta, dt, K, N,
             state, PayGPU, n);
 
     cudaEventRecord(stop, 0);
@@ -65,7 +65,7 @@ int main(void) {
     //cudaMemcpy(PayCPU, PayGPU, n* sizeof(float), cudaMemcpyDeviceToHost);
     cudaMemcpy(PayCPU, PayGPU, 1* sizeof(float), cudaMemcpyDeviceToHost);
     
-    float sum = PayCPU[0]; // pricing estimation
+    float sum = PayCPU[0]/(float)n; // pricing estimation
     //float sum2 = 0.0f; // We would need to compute this separately if we want the confidence interval
 
     /* Reduction performed on the host
