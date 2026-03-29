@@ -1,9 +1,3 @@
-/**************************************************************
-Lokman A. Abbas-Turki code
-
-Those who re-use this code should mention in their code
-the name of the author above.
-***************************************************************/
 
 #include <stdio.h>
 #include <curand_kernel.h>
