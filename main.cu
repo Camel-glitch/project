@@ -91,6 +91,8 @@ MC_almost<<<NB, NTPB, shared_mem_size>>>(rho, v_0, S_0, r, sigma, k, theta, dt, 
 cudaEventRecord(stop);
 cudaEventSynchronize(stop);
 cudaEventElapsedTime(&t_almost, start, stop);
+cudaMemcpy(PayCPU, PayGPU, 2* sizeof(float), cudaMemcpyDeviceToHost);
+
 float price_almost = PayCPU[0]/(float)n; // pricing estimation
 float second_moment_almost = PayCPU[1]/(float)n; 
 
@@ -103,6 +105,8 @@ MC_almost<<<NB, NTPB, shared_mem_size>>>(rho, v_0, S_0, r, sigma, k, theta, dt_c
 cudaEventRecord(stop);
 cudaEventSynchronize(stop);
 cudaEventElapsedTime(&t_almost30, start, stop);
+cudaMemcpy(PayCPU, PayGPU, 2* sizeof(float), cudaMemcpyDeviceToHost);
+
 float price_almost30 = PayCPU[0]/(float)n; // pricing estimation
 float second_moment_almost30 = PayCPU[1]/(float)n; 
 
@@ -113,6 +117,8 @@ MC_exact<<<NB, NTPB, shared_mem_size>>>(rho, v_0, S_0, r, sigma, k, theta, dt, K
 cudaEventRecord(stop);
 cudaEventSynchronize(stop);
 cudaEventElapsedTime(&t_exact, start, stop);
+cudaMemcpy(PayCPU, PayGPU, 2* sizeof(float), cudaMemcpyDeviceToHost);
+
 float price_exact = PayCPU[0]/(float)n; // pricing estimation
 float second_moment_exact = PayCPU[1]/(float)n; 
 
