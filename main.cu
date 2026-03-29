@@ -73,6 +73,7 @@ int main(void) {
 //Benchmarking Variables
 float t_euler, t_almost, t_almost30, t_exact;
 float price_euler, price_almost, price_almost30, price_exact;
+float second_moment_euler, second_moment_almost, second_moment_almost30, second_moment_exact;
 float error_euler, error_almost, error_almost30, error_exact;
 
 //Timing Variables
