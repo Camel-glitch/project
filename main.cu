@@ -97,6 +97,7 @@ for (int i = 0; i < steps_k; i++) {
                 // Vérification de la condition de Feller
                 float feller_lhs = 2.0f * k * theta;
                 float feller_rhs = sigma * sigma;
+                printf("Testing k=%.4f, theta=%.4f, sigma=%.4f, Feller LHS=%.4f, Feller RHS=%.4f\n", k, theta, sigma, feller_lhs, feller_rhs);
 
                 if (feller_lhs > feller_rhs) {
                     id++;
