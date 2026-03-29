@@ -39,15 +39,14 @@ __global__ void MC_almost(float rho, float v_0, float S_0, float r, float sigma,
 
     if (idx < n) {
       curandState localState = state[idx];
-      float2 log_S = log(S_0);
+      float log_S = log(S_0);
       float2 G; 
       float rho_sigma = rho / sigma;
-      float k0 = (-rho_sigma * kappa * theta) * dt;
-      float k1 = (rho_sigma * kappa - 0.5f) * dt - rho_sigma;
+      float k0 = (-rho_sigma * k * theta) * dt;
+      float k1 = (rho_sigma * k - 0.5f) * dt - rho_sigma;
       float k2 = rho_sigma;
       float v0 = v_0 ;
-      float v1 = step_variance(v0, kappa, theta, sigma, dt,state) 
-
+      float v1 = step_variance(v0, k, theta, sigma, dt,state); 
       for (int i = 0; i<N;i++){
         G = curand_normal2(&localState);
         log_S = log_S + k0 +k1*v0 + k2*v1 +  + sqrt((1-rho*rho)*v0*dt)*(rho*G.x + sqrt(1-rho*rho)*G.y));
