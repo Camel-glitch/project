@@ -58,12 +58,12 @@ __device__ float step_variance(float vt, float kappa, float theta, float sigma, 
     // 1. Précalcul des constantes pour ce pas de temps
     float exp_kdt = exp(-kappa * dt);
     float sigma2 = sigma * sigma;
-    float scale = (sigma2 * (1.0 - exp_kdt)) / (2.0 * kappa); 
+    float scale = (sigma2 * (1.0f - exp_kdt)) / (2.0f * kappa); 
 
     // 2. Calcul des paramètres d et lambda
     // Note : d dans ton énoncé est le "degré de liberté" divisé par 2
-    float d = (2.0 * kappa * theta) / sigma2;
-    float lambda = (2.0 * kappa * exp_kdt * vt) / (sigma2 * (1.0 - exp_kdt));
+    float d = (2.0f * kappa * theta) / sigma2;
+    float lambda = (2.0f * kappa * exp_kdt * vt) / (sigma2 * (1.0f - exp_kdt));
 
     // 3. Simulation de la composante Poisson (N)
     // N ~ Poisson(lambda)
