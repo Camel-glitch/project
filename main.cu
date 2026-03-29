@@ -99,6 +99,7 @@ cudaMemset(PayGPU, 0, 2 * sizeof(float));
 cudaEventRecord(start);
 // On utilise N_coarse et dt_coarse ici
 MC_almost<<<NB, NTPB, shared_mem_size>>>(rho, v_0, S_0, r, sigma, k, theta, dt_coarse, K, N_coarse, state, &PayGPU[0], &PayGPU[1], n);
+
 cudaEventRecord(stop);
 cudaEventSynchronize(stop);
 cudaEventElapsedTime(&t_almost30, start, stop);
@@ -125,14 +126,14 @@ printf("Temps Euler: %.3f ms | Almost Fine: %.3f ms | Almost Coarse: %.3f ms | E
 
 
     
-
+/*
 printf("The estimated price is equal to %f\n", price);
 printf("error (95%% CI) = %f\n", 1.96 * sqrt((double)(1.0f / (n - 1)) * (n * second_moment - (n * price * price))) / sqrt((double)n));
     
     
     // Note: The Black-Scholes formula in your print statement is a simplified version for comparison
     printf("Execution time %f ms\n", Tim);
-
+*/
     // 4. Cleanup
     cudaFree(PayGPU);
     cudaFree(state);
