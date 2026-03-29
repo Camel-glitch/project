@@ -2,6 +2,6 @@
 #define MC_EXACT_H
 
 __global__ void MC_exact(float rho, float v_0, float S_0, float r, float sigma, float k, float theta, float dt, float K, int N,
-              curandState* state, float* sum, int n);
+              curandState* state, float* sum, float* second_moment, int n);
 
 #endif // MC_EXACT_H    

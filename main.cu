@@ -7,6 +7,23 @@
 #include "MC_exact.h"
 #include "MC_almost.h"
 
+
+
+// Function that catches the error 
+void testCUDA(cudaError_t error, const char* file, int line) {
+
+	if (error != cudaSuccess) {
+		printf("There is an error in file %s at line %d\n", file, line);
+		exit(EXIT_FAILURE);
+	}
+}
+
+// Has to be defined in the compilation in order to get the correct value of the 
+// macros __FILE__ and __LINE__
+#define testCUDA(error) (testCUDA(error, __FILE__ , __LINE__))
+
+
+
 int main(void) {
     int NTPB = 512;
     int NB = 512;
@@ -26,12 +43,10 @@ int main(void) {
     float v_0 = 0.1f;
 
     // CPU Memory Allocation
-    //float *PayCPU = (float*)malloc(n * sizeof(float));
     float *PayCPU = (float*)malloc(2 * sizeof(float)); // Only one float for the sum
 
     // GPU Memory Allocation
     float *PayGPU;
-    //cudaMalloc((void**)&PayGPU, n * sizeof(float));
     cudaMalloc((void**)&PayGPU, 2 * sizeof(float));
 
     // RNG State Allocation
@@ -44,45 +59,75 @@ int main(void) {
     // Arguments: State array, Global Seed
     init_curand_state_k<<<NB, NTPB>>>(state, seed);
 
-    // Timing Setup
-    float Tim;
-    cudaEvent_t start, stop;
-    cudaEventCreate(&start);
-    cudaEventCreate(&stop);
-    cudaEventRecord(start, 0);
+float t_euler, t_almost, t_almost30, t_exact;
+cudaEvent_t start, stop;
+cudaEventCreate(&start);
+cudaEventCreate(&stop);
 
-    // 2. Launch Monte Carlo Kernel
-    // Arguments: state, output array, and model parameters
-    
-    size_t shared_mem_size = 2 * NTPB * sizeof(float); // Shared memory for both sums
-    MC_euler<<<NB, NTPB, shared_mem_size>>>(rho,v_0,S_0, r, sigma, k, theta, dt, K, N,
-            state, &PayGPU[0], &PayGPU[1], n);
+size_t shared_mem_size = 2 * NTPB * sizeof(float);
 
-    cudaEventRecord(stop, 0);
-    cudaEventSynchronize(stop);
-    cudaEventElapsedTime(&Tim, start, stop);
-    
+int N_coarse = 30; 
+float dt_coarse = T / (float)N_coarse;
+
+// --- 2. Mesure MC_euler ---
+cudaMemset(PayGPU, 0, 2 * sizeof(float)); // Reset obligatoire
+cudaEventRecord(start);
+MC_euler<<<NB, NTPB, shared_mem_size>>>(rho, v_0, S_0, r, sigma, k, theta, dt, K, N, state, &PayGPU[0], &PayGPU[1], n);
+cudaEventRecord(stop);
+cudaEventSynchronize(stop);
+cudaEventElapsedTime(&t_euler, start, stop);
     // 3. Copy Results back to Host
-    //cudaMemcpy(PayCPU, PayGPU, n* sizeof(float), cudaMemcpyDeviceToHost);
-    cudaMemcpy(PayCPU, PayGPU, 2* sizeof(float), cudaMemcpyDeviceToHost);
+cudaMemcpy(PayCPU, PayGPU, 2* sizeof(float), cudaMemcpyDeviceToHost);
     
-    float price = PayCPU[0]/(float)n; // pricing estimation
-    float second_moment = PayCPU[1]/(float)n; // We would need to compute this separately if we want the confidence interval
+float price_euler = PayCPU[0]/(float)n; // pricing estimation
+float second_moment_euler = PayCPU[1]/(float)n; 
 
-    /* Reduction performed on the host
-    float sum = 0.0f;
-    float sum2 = 0.0f;
-    for (int i = 0; i < n; i++) {
-        sum += PayCPU[i];
-        sum2 += PayCPU[i] * PayCPU[i];
-    }
     
-    sum = sum / n;
-    sum2 = sum2 / n; 
-    */
 
-    printf("The estimated price is equal to %f\n", price);
-    printf("error (95%% CI) = %f\n", 1.96 * sqrt((double)(1.0f / (n - 1)) * (n * second_moment - (n * price * price))) / sqrt((double)n));
+// --- 3. Mesure MC_almost (Fine) ---
+cudaMemset(PayGPU, 0, 2 * sizeof(float));
+cudaEventRecord(start);
+MC_almost<<<NB, NTPB, shared_mem_size>>>(rho, v_0, S_0, r, sigma, k, theta, dt, K, N, state, &PayGPU[0], &PayGPU[1], n);
+cudaEventRecord(stop);
+cudaEventSynchronize(stop);
+cudaEventElapsedTime(&t_almost, start, stop);
+float price_almost = PayCPU[0]/(float)n; // pricing estimation
+float second_moment_almost = PayCPU[1]/(float)n; 
+
+// --- 4. Mesure MC_almost (Coarse / "30") ---
+cudaMemset(PayGPU, 0, 2 * sizeof(float));
+cudaEventRecord(start);
+// On utilise N_coarse et dt_coarse ici
+MC_almost<<<NB, NTPB, shared_mem_size>>>(rho, v_0, S_0, r, sigma, k, theta, dt_coarse, K, N_coarse, state, &PayGPU[0], &PayGPU[1], n);
+cudaEventRecord(stop);
+cudaEventSynchronize(stop);
+cudaEventElapsedTime(&t_almost30, start, stop);
+float price_almost30 = PayCPU[0]/(float)n; // pricing estimation
+float second_moment_almost30 = PayCPU[1]/(float)n; 
+
+// --- 5. Mesure MC_exact ---
+cudaMemset(PayGPU, 0, 2 * sizeof(float));
+cudaEventRecord(start);
+MC_exact<<<NB, NTPB, shared_mem_size>>>(rho, v_0, S_0, r, sigma, k, theta, dt, K, N, state, &PayGPU[0], &PayGPU[1], n);
+cudaEventRecord(stop);
+cudaEventSynchronize(stop);
+cudaEventElapsedTime(&t_exact, start, stop);
+float price_exact = PayCPU[0]/(float)n; // pricing estimation
+float second_moment_exact = PayCPU[1]/(float)n; 
+
+// --- 6. Nettoyage et Affichage ---
+cudaEventDestroy(start);
+cudaEventDestroy(stop);
+
+printf("Temps Euler: %.3f ms | Almost Fine: %.3f ms | Almost Coarse: %.3f ms | Exact: %.3f ms\n", 
+        t_euler, t_almost, t_almost30, t_exact);
+
+
+
+    
+
+printf("The estimated price is equal to %f\n", price);
+printf("error (95%% CI) = %f\n", 1.96 * sqrt((double)(1.0f / (n - 1)) * (n * second_moment - (n * price * price))) / sqrt((double)n));
     
     
     // Note: The Black-Scholes formula in your print statement is a simplified version for comparison

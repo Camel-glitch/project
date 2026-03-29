@@ -20,7 +20,7 @@ $(TARGET): $(OBJS)
 # 4. Règle générique pour les fichiers .c -> .o
 %.o: %.c
 	$(NVCC) -c $< -o $@
-
+	
 # 5. Règle générique pour les fichiers .cu -> .o
 %.o: %.cu
 	$(NVCC) -c $< -o $@
