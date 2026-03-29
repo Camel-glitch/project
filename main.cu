@@ -33,11 +33,8 @@ int main(void) {
     // Model Parameters
     float T = 1.0f;
     float rho = 0.5f; 
-    float k = 0.5;
-    float theta = 0.1;
     float S_0 = 1.0f;
     float K = S_0;
-    float sigma = 0.3f;
     float r = 0.0f;
     float v_0 = 0.1f;
 
@@ -98,7 +95,7 @@ for (int i = 0; i < steps_k; i++) {
                 float sigma = 0.1f + l * (0.9f / (steps_s - 1));
 
                 // Vérification de la condition de Feller
-                float feller_lhs = 20.0f * k * theta;
+                float feller_lhs = 2.0f * k * theta;
                 float feller_rhs = sigma * sigma;
 
                 if (feller_lhs > feller_rhs) {
