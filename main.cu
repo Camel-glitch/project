@@ -84,9 +84,9 @@ cudaEventCreate(&stop);
 size_t shared_mem_size = 2 * NTPB * sizeof(float);
 
 // --- Définition de la Grille (Grid Search) ---
-    int steps_k = 10;   // 10 valeurs de kappa
-    int steps_t = 5;    // 5 valeurs de theta
-    int steps_s = 5;    // 5 valeurs de sigma
+    int steps_k = 100;   // 10 valeurs de kappa
+    int steps_t = 50;    // 5 valeurs de theta
+    int steps_s = 50;    // 5 valeurs de sigma
 
 for (int i = 0; i < steps_k; i++) {
         float k = 0.1f + i * (9.9f / (steps_k - 1));
@@ -170,9 +170,9 @@ for (int i = 0; i < steps_k; i++) {
                     cudaEventDestroy(stop);
 
                     //output CSV format
-                    printf("%d,%.4f,%.4f,%.4f,%.4f,%.3f,%.3f,%.3f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f\n",
+                    printf("%d,%.4f,%.4f,%.4f,%.4f,%.3f,%.3f,%.3f,%.3f%,.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f\n",
                            id, k, theta, sigma, feller_lhs - feller_rhs,
-                           t_euler, t_almost, t_exact, price_euler, price_almost, price_exact, error_euler, error_almost, error_exact);
+                           t_euler, t_almost, t_almost30, t_exact, price_euler, price_almost, price_almost30, price_exact, error_euler, error_almost, error_almost30);
                     
                     fflush(stdout); // Pour voir les résultats en temps réel
                 }
