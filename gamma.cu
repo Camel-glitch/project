@@ -34,3 +34,4 @@ __device__ double generate_gamma(double a, curandState *state) {
             return d * v;
         }
     }
+}
