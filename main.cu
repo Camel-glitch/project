@@ -122,6 +122,8 @@ cudaEventDestroy(stop);
 
 printf("Temps Euler: %.3f ms | Almost Fine: %.3f ms | Almost Coarse: %.3f ms | Exact: %.3f ms\n", 
         t_euler, t_almost, t_almost30, t_exact);
+printf("Price Euler: %f | Price Almost Fine: %f | Price Almost Coarse: %f | Price Exact: %f\n", 
+        price_euler, price_almost, price_almost30, price_exact);
 
 
 
