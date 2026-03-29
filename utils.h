@@ -17,6 +17,6 @@ HestonParams generate_valid_params();
 
 __global__ void init_curand_state_k(curandState *state, unsigned long seed);   
 
-__device__ double step_variance(double v_prev, float kappa, float theta, float sigma, float dt, curandState *state);
+__device__ float step_variance(float v_prev, float kappa, float theta, float sigma, float dt, curandState *state);
 
 #endif // UTILS_H

@@ -54,16 +54,16 @@ __global__ void init_curand_state_k(curandState *state, unsigned long seed) {
 }
 
 
-__device__ double step_variance(double vt, double kappa, double theta, double sigma, double dt, curandState *state) {
+__device__ float step_variance(float vt, float kappa, float theta, float sigma, float dt, curandState *state) {
     // 1. Précalcul des constantes pour ce pas de temps
-    double exp_kdt = exp(-kappa * dt);
-    double sigma2 = sigma * sigma;
-    double scale = (sigma2 * (1.0 - exp_kdt)) / (2.0 * kappa); 
+    float exp_kdt = exp(-kappa * dt);
+    float sigma2 = sigma * sigma;
+    float scale = (sigma2 * (1.0 - exp_kdt)) / (2.0 * kappa); 
 
     // 2. Calcul des paramètres d et lambda
     // Note : d dans ton énoncé est le "degré de liberté" divisé par 2
-    double d = (2.0 * kappa * theta) / sigma2;
-    double lambda = (2.0 * kappa * exp_kdt * vt) / (sigma2 * (1.0 - exp_kdt));
+    float d = (2.0 * kappa * theta) / sigma2;
+    float lambda = (2.0 * kappa * exp_kdt * vt) / (sigma2 * (1.0 - exp_kdt));
 
     // 3. Simulation de la composante Poisson (N)
     // N ~ Poisson(lambda)
@@ -71,8 +71,8 @@ __device__ double step_variance(double vt, double kappa, double theta, double si
 
     // 4. Simulation de la Gamma standard G(alpha)
     // alpha = d + N
-    double alpha = d + N;
-    double Gam = generate_gamma(alpha, state); 
+    float alpha = d + N;
+    float Gam = generate_gamma(alpha, state); 
 
     // 5. Calcul de vt+dt
     // La formule vt+dt = scale *  G(d + N) correspond à la loi du Khi-deux non-centrale
