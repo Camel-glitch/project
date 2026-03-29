@@ -49,9 +49,9 @@ __global__ void MC_almost(float rho, float v_0, float S_0, float r, float sigma,
       float v1 = step_variance(v0, k, theta, sigma, dt,state); 
       for (int i = 0; i<N;i++){
         G = curand_normal2(&localState);
-        log_S = log_S + k0 +k1*v0 + k2*v1 +  + sqrt((1-rho*rho)*v0*dt)*(rho*G.x + sqrt(1-rho*rho)*G.y));
+        log_S = log_S + k0 +k1*v0 + k2*v1 +  + sqrt((1-rho*rho)*v0*dt)*(rho*G.x + sqrt(1-rho*rho)*G.y);
         v0 = v1; 
-        v1 = step_variance(v0, kappa, theta, sigma, dt,state);
+        v1 = step_variance(v0, k, theta, sigma, dt,state);
       }
       
       payoff = fmaxf(0.0f, exp(log_S) - K);
