@@ -81,9 +81,9 @@ cudaEventCreate(&stop);
 size_t shared_mem_size = 2 * NTPB * sizeof(float);
 
 // --- Définition de la Grille (Grid Search) ---
-    int steps_k = 100;   // 10 valeurs de kappa
-    int steps_t = 50;    // 5 valeurs de theta
-    int steps_s = 50;    // 5 valeurs de sigma
+    int steps_k = 10;   // 10 valeurs de kappa
+    int steps_t = 5;    // 5 valeurs de theta
+    int steps_s = 5;    // 5 valeurs de sigma
 
 for (int i = 0; i < steps_k; i++) {
         float k = 0.1f + i * (9.9f / (steps_k - 1));
