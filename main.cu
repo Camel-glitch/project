@@ -1,4 +1,4 @@
-#include <stdio.h>
+/*#include <stdio.h>
 #include <curand_kernel.h>
 #include <math.h>
 #include "gamma.h"
@@ -179,4 +179,4 @@ while (fscanf(file, "%f,%f,%f", &k, &theta, &sigma) == 3) {
     cudaEventDestroy(stop);
 
     return 0;
-}
+}*/
