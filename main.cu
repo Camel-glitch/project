@@ -80,26 +80,20 @@ cudaEventCreate(&stop);
 
 size_t shared_mem_size = 2 * NTPB * sizeof(float);
 
-// --- Définition de la Grille (Grid Search) ---
-    int steps_k = 10;   // 10 valeurs de kappa
-    int steps_t = 5;    // 5 valeurs de theta
-    int steps_s = 5;    // 5 valeurs de sigma
+FILE* file = fopen("params_feller.csv", "r");
+    if (!file) {
+        printf("Erreur : Impossible d'ouvrir le fichier de paramètres.\n");
+        return 1;
+    }
 
-for (int i = 0; i < steps_k; i++) {
-        float k = 0.1f + i * (9.9f / (steps_k - 1));
-        
-        for (int j = 0; j < steps_t; j++) {
-            float theta = 0.01f + j * (0.49f / (steps_t - 1));
-            
-            for (int l = 0; l < steps_s; l++) {
-                float sigma = 0.1f + l * (0.9f / (steps_s - 1));
-
+float k, theta, sigma;
+int id = 0;
+while (fscanf(file, "%f,%f,%f", &k, &theta, &sigma) == 3) {
                 // Vérification de la condition de Feller
                 float feller_lhs = 2.0f * k * theta;
                 float feller_rhs = sigma * sigma;
                 printf("Testing k=%.4f, theta=%.4f, sigma=%.4f, Feller LHS=%.4f, Feller RHS=%.4f\n", k, theta, sigma, feller_lhs, feller_rhs);
 
-                if (feller_lhs > feller_rhs) {
                     id++;
 
 
@@ -174,9 +168,9 @@ for (int i = 0; i < steps_k; i++) {
                     
                     fflush(stdout); // Pour voir les résultats en temps réel
                 }
-            }
-        }
-    }
+            
+     fclose(file);   
+    
 
 
 
