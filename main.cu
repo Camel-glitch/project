@@ -58,9 +58,6 @@ int main(void) {
     // Random Seed (using system time or fixed value)
     unsigned long seed = 1234ULL; 
     
-    
-    int id = 0;
-
     // Header pour ton DataFrame
     printf("id,kappa,theta,sigma,feller_val,ms_euler,ms_almost,ms_exact,price_euler,price_almost,price_exact,err_euler,err_almost,err_exact\n");
     
@@ -94,7 +91,6 @@ while (fscanf(file, "%f,%f,%f", &k, &theta, &sigma) == 3) {
                 float feller_rhs = sigma * sigma;
                 printf("Testing k=%.4f, theta=%.4f, sigma=%.4f, Feller LHS=%.4f, Feller RHS=%.4f\n", k, theta, sigma, feller_lhs, feller_rhs);
 
-                    id++;
 
 
                     // --- 2. Mesure MC_euler ---
@@ -167,6 +163,7 @@ while (fscanf(file, "%f,%f,%f", &k, &theta, &sigma) == 3) {
                            t_euler, t_almost, t_almost30, t_exact, price_euler, price_almost, price_almost30, price_exact, error_euler, error_almost, error_almost30);
                     
                     fflush(stdout); // Pour voir les résultats en temps réel
+                    id++;
                 }
             
      fclose(file);   
