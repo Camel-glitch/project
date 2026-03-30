@@ -22,13 +22,13 @@ __global__ void MC_exact(float rho, float v_0, float S_0, float r, float sigma, 
     float2 G2; 
     float S = S_0 ;
     float v0 = v_0 ;
-    float v1 = step_variance(v0, k, theta, sigma, dt,state); 
+    float v1 = step_variance(v0, k, theta, sigma, dt,&localState); 
     float vI = 0.0 ; 
     for (int i = 0; i<N;i++){
       //update v1 and v0 
       vI += 0.5*(v0+v1)*dt;
       v0 = v1;
-      v1 = step_variance(v0, k, theta, sigma, dt,state); 
+      v1 = step_variance(v0, k, theta, sigma, dt,&localState); 
     
 
     }
