@@ -21,7 +21,7 @@ int main(void) {
     int n = NB * NTPB;
     
     float T = 1.0f, rho = 0.5f, S_0 = 1.0f, K = S_0, r = 0.0f, v_0 = 0.1f;
-    int N = 100;
+    int N = 1000;
     float dt = T / (float)N;
     int N_coarse = 30; 
     float dt_coarse = T / (float)N_coarse;
